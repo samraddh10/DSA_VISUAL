@@ -7,7 +7,7 @@ import { DEFAULT_SPEED } from './types.js'
  * @param {import('./types.js').AnimationStep[]} steps
  * @returns Playback controls and current state
  */
-export default function usePlayback(steps) {
+export default function usePlayback(steps, { autoPlay = false } = {}) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState(DEFAULT_SPEED)
