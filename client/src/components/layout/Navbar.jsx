@@ -11,6 +11,7 @@ const navLinks = [
   { label: 'Stacks & Queues', path: '/stack-queue' },
   { label: 'Trees', path: '/trees' },
   { label: 'Graphs', path: '/graphs' },
+  { label: 'DP', path: '/dp' },
 ]
 
 export default function Navbar() {

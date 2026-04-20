@@ -10,6 +10,8 @@ const LinkedListPage = lazy(() => import('./pages/LinkedListPage.jsx'))
 const StackQueuePage = lazy(() => import('./pages/StackQueuePage.jsx'))
 const TreePage = lazy(() => import('./pages/TreePage.jsx'))
 const HeapPage = lazy(() => import('./pages/HeapPage.jsx'))
+const GraphPage = lazy(() => import('./pages/GraphPage.jsx'))
+const DPPage = lazy(() => import('./pages/DPPage.jsx'))
 
 function LoadingFallback() {
   return (
@@ -33,6 +35,8 @@ export default function App() {
             <Route path="/stack-queue" element={<StackQueuePage />} />
             <Route path="/trees" element={<TreePage />} />
             <Route path="/heaps" element={<HeapPage />} />
+            <Route path="/graphs" element={<GraphPage />} />
+            <Route path="/dp" element={<DPPage />} />
           </Routes>
         </Suspense>
       </main>
