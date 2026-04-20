@@ -5,3 +5,9 @@ dist/
 .DS_Store
 # Added by code-review-graph
 .code-review-graph/
+
+# Claude Code internal files
+CLAUDE.md
+**/CLAUDE.md
+.claude/
+.mcp.json
