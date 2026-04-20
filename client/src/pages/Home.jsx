@@ -11,6 +11,7 @@ import {
   Hash,
   Network,
   Cpu,
+  Swords,
 } from 'lucide-react'
 
 /* ─── Category Card ─── */
@@ -277,6 +278,12 @@ const categories = [
     description: 'Solve complex problems with tabulation',
     icon: <Cpu size={24} />,
     path: '/dp',
+  },
+  {
+    title: 'Compare Algorithms',
+    description: 'Race two sorting algorithms side-by-side',
+    icon: <Swords size={24} />,
+    path: '/compare',
   },
 ]
 

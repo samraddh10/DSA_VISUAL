@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play,
@@ -16,6 +17,8 @@ import { Highlight, themes } from 'prism-react-renderer'
 import SearchVisualizer from '../visualizers/searching/SearchVisualizer.jsx'
 import useSearchEngine from '../visualizers/searching/useSearchEngine.js'
 import { PLAYBACK_SPEEDS } from '../engine/types.js'
+import ShareButton from '../components/ui/ShareButton.jsx'
+import { decodeShareState } from '../lib/shareLink.js'
 
 import { linearSearchMeta } from '../visualizers/searching/algorithms/linearSearch.js'
 import { binarySearchMeta } from '../visualizers/searching/algorithms/binarySearch.js'
@@ -37,17 +40,30 @@ function generateRandomArray(size) {
 }
 
 export default function SearchingPage() {
-  const [selectedAlgo, setSelectedAlgo] = useState(algorithms[0])
+  const location = useLocation()
+  const initialRef = useRef(decodeShareState(location.search))
+  const initial = initialRef.current
+  const initialAlgo =
+    (initial.alg && algorithms.find((a) => a.id === initial.alg)) || algorithms[0]
+
+  const [selectedAlgo, setSelectedAlgo] = useState(initialAlgo)
   const [selectedLang, setSelectedLang] = useState('javascript')
-  const [arraySize, setArraySize] = useState(15)
-  const [inputArray, setInputArray] = useState([])
-  const [target, setTarget] = useState(null)
+  const [arraySize, setArraySize] = useState(
+    initial.data && initial.data.length > 0 ? initial.data.length : 15
+  )
+  const [inputArray, setInputArray] = useState(initial.data || [])
+  const [target, setTarget] = useState(
+    initial.target !== undefined ? initial.target : null
+  )
   const [customValue, setCustomValue] = useState('')
   const [targetInput, setTargetInput] = useState('')
+  const restoredFromUrlRef = useRef(!!(initial.data && initial.data.length > 0))
 
-  // Generate initial array + pick random target
+  // Generate initial array + pick random target (skip if restored from URL)
   useEffect(() => {
+    if (restoredFromUrlRef.current) return
     regenerate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function regenerate() {
@@ -59,9 +75,14 @@ export default function SearchingPage() {
     setTarget(arr[Math.floor(Math.random() * arr.length)])
   }
 
-  // Regenerate when algo or size changes
+  // Regenerate when algo or size changes (skip the first run if URL restored)
   useEffect(() => {
+    if (restoredFromUrlRef.current) {
+      restoredFromUrlRef.current = false
+      return
+    }
     regenerate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAlgo.id, arraySize])
 
   const {
@@ -81,6 +102,15 @@ export default function SearchingPage() {
     goToStep,
     stats,
   } = useSearchEngine(selectedAlgo.id, inputArray, target)
+
+  const stepRestored = useRef(false)
+  useEffect(() => {
+    if (stepRestored.current) return
+    if (initial.step !== undefined && initial.step > 0 && totalSteps > 0) {
+      goToStep(initial.step)
+      stepRestored.current = true
+    }
+  }, [totalSteps, initial.step, goToStep])
 
   const handleCustomSubmit = (e) => {
     e.preventDefault()
@@ -144,14 +174,24 @@ export default function SearchingPage() {
       {/* Content */}
       <div className="relative z-10 p-6 space-y-6 max-w-[1400px] mx-auto">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-            <Search className="w-10 h-10 text-cyan-400" />
-            Searching Algorithm Visualizer
-          </h1>
-          <p className="text-purple-300">
-            Visualize how search algorithms locate elements step by step
-          </p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+              <Search className="w-10 h-10 text-cyan-400" />
+              Searching Algorithm Visualizer
+            </h1>
+            <p className="text-purple-300">
+              Visualize how search algorithms locate elements step by step
+            </p>
+          </div>
+          <ShareButton
+            state={{
+              alg: selectedAlgo.id,
+              data: inputArray,
+              target,
+              step: currentIndex,
+            }}
+          />
         </div>
 
         {/* Algorithm tabs */}

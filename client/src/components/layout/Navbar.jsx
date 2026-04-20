@@ -13,6 +13,7 @@ const navLinks = [
   { label: 'Trees', path: '/trees' },
   { label: 'Graphs', path: '/graphs' },
   { label: 'DP', path: '/dp' },
+  { label: 'Compare', path: '/compare' },
 ]
 
 export default function Navbar() {

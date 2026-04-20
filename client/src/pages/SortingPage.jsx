@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Play,
@@ -16,6 +17,8 @@ import SortingVisualizer from '../visualizers/sorting/SortingVisualizer.jsx'
 import useSortingEngine from '../visualizers/sorting/useSortingEngine.js'
 import { PLAYBACK_SPEEDS } from '../engine/types.js'
 import useVisualizerStore from '../stores/visualizerStore.js'
+import ShareButton from '../components/ui/ShareButton.jsx'
+import { decodeShareState } from '../lib/shareLink.js'
 
 import { bubbleSortMeta } from '../visualizers/sorting/algorithms/bubbleSort.js'
 import { selectionSortMeta } from '../visualizers/sorting/algorithms/selectionSort.js'
@@ -34,14 +37,25 @@ const algorithms = [
 ]
 
 export default function SortingPage() {
-  const [selectedAlgo, setSelectedAlgo] = useState(algorithms[0])
+  const location = useLocation()
+  const initialRef = useRef(decodeShareState(location.search))
+  const initial = initialRef.current
+  const initialAlgo =
+    (initial.alg && algorithms.find((a) => a.id === initial.alg)) || algorithms[0]
+
+  const [selectedAlgo, setSelectedAlgo] = useState(initialAlgo)
   const [selectedLang, setSelectedLang] = useState('javascript')
   const [customValue, setCustomValue] = useState('')
   const { inputArray, arraySize, setArraySize, generateRandomArray, setInputArray } =
     useVisualizerStore()
 
   useEffect(() => {
-    if (inputArray.length === 0) generateRandomArray()
+    if (initial.data && initial.data.length > 0) {
+      setInputArray(initial.data)
+    } else if (inputArray.length === 0) {
+      generateRandomArray()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
@@ -61,6 +75,15 @@ export default function SortingPage() {
     goToStep,
     stats,
   } = useSortingEngine(selectedAlgo.id, inputArray)
+
+  const stepRestored = useRef(false)
+  useEffect(() => {
+    if (stepRestored.current) return
+    if (initial.step !== undefined && initial.step > 0 && totalSteps > 0) {
+      goToStep(initial.step)
+      stepRestored.current = true
+    }
+  }, [totalSteps, initial.step, goToStep])
 
   const handleCustomSubmit = (e) => {
     e.preventDefault()
@@ -113,14 +136,19 @@ export default function SortingPage() {
       {/* Content */}
       <div className="relative z-10 p-6 space-y-6 max-w-[1400px] mx-auto">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-            <Activity className="w-10 h-10 text-cyan-400" />
-            Sorting Algorithm Visualizer
-          </h1>
-          <p className="text-purple-300">
-            Visualize and understand sorting algorithms step by step
-          </p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+              <Activity className="w-10 h-10 text-cyan-400" />
+              Sorting Algorithm Visualizer
+            </h1>
+            <p className="text-purple-300">
+              Visualize and understand sorting algorithms step by step
+            </p>
+          </div>
+          <ShareButton
+            state={{ alg: selectedAlgo.id, data: inputArray, step: currentIndex }}
+          />
         </div>
 
         {/* Algorithm tabs */}
