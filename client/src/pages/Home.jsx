@@ -12,6 +12,7 @@ import {
   Network,
   Cpu,
   Swords,
+  Brain,
 } from 'lucide-react'
 
 /* ─── Category Card ─── */
@@ -284,6 +285,12 @@ const categories = [
     description: 'Race two sorting algorithms side-by-side',
     icon: <Swords size={24} />,
     path: '/compare',
+  },
+  {
+    title: 'Quiz Mode',
+    description: 'Test your algorithm intuition step-by-step',
+    icon: <Brain size={24} />,
+    path: '/quiz',
   },
 ]
 

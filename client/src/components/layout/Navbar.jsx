@@ -6,14 +6,8 @@ import useAuthStore from '../../stores/authStore.js'
 
 const navLinks = [
   { label: 'Home', path: '/' },
-  { label: 'Sorting', path: '/sorting' },
-  { label: 'Searching', path: '/searching' },
-  { label: 'Linked Lists', path: '/linked-list' },
-  { label: 'Stacks & Queues', path: '/stack-queue' },
-  { label: 'Trees', path: '/trees' },
-  { label: 'Graphs', path: '/graphs' },
-  { label: 'DP', path: '/dp' },
   { label: 'Compare', path: '/compare' },
+  { label: 'Quiz', path: '/quiz' },
 ]
 
 export default function Navbar() {

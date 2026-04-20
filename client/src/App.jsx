@@ -15,6 +15,7 @@ const HeapPage = lazy(() => import('./pages/HeapPage.jsx'))
 const GraphPage = lazy(() => import('./pages/GraphPage.jsx'))
 const DPPage = lazy(() => import('./pages/DPPage.jsx'))
 const ComparisonPage = lazy(() => import('./pages/ComparisonPage.jsx'))
+const QuizPage = lazy(() => import('./pages/QuizPage.jsx'))
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage.jsx'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'))
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/graphs" element={<GraphPage />} />
             <Route path="/dp" element={<DPPage />} />
             <Route path="/compare" element={<ComparisonPage />} />
+            <Route path="/quiz" element={<QuizPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route
