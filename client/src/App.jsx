@@ -1,7 +1,9 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/layout/Navbar.jsx'
 import Footer from './components/layout/Footer.jsx'
+import ProtectedRoute from './components/auth/ProtectedRoute.jsx'
+import useAuthStore from './stores/authStore.js'
 
 const Home = lazy(() => import('./pages/Home.jsx'))
 const SortingPage = lazy(() => import('./pages/SortingPage.jsx'))
@@ -12,6 +14,9 @@ const TreePage = lazy(() => import('./pages/TreePage.jsx'))
 const HeapPage = lazy(() => import('./pages/HeapPage.jsx'))
 const GraphPage = lazy(() => import('./pages/GraphPage.jsx'))
 const DPPage = lazy(() => import('./pages/DPPage.jsx'))
+const LoginPage = lazy(() => import('./pages/LoginPage.jsx'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage.jsx'))
+const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'))
 
 function LoadingFallback() {
   return (
@@ -22,6 +27,12 @@ function LoadingFallback() {
 }
 
 export default function App() {
+  const fetchMe = useAuthStore((s) => s.fetchMe)
+
+  useEffect(() => {
+    fetchMe()
+  }, [fetchMe])
+
   return (
     <div className="min-h-screen bg-bg-primary flex flex-col">
       <Navbar />
@@ -37,6 +48,16 @@ export default function App() {
             <Route path="/heaps" element={<HeapPage />} />
             <Route path="/graphs" element={<GraphPage />} />
             <Route path="/dp" element={<DPPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Suspense>
       </main>

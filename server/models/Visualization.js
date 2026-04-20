@@ -7,6 +7,12 @@ const visualizationSchema = new mongoose.Schema(
     category: { type: String, required: true, index: true },
     inputData: { type: mongoose.Schema.Types.Mixed, required: true },
     shareId: { type: String, unique: true, index: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 )
